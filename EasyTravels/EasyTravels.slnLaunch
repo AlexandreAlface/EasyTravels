@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "DAW",
+    "Projects": [
+      {
+        "Path": "EasyTravelsAPI.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\EasyTravelsFrontEnd\\EasyTravelsFrontEnd.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35514.174 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTravelsAPI", "EasyTravelsAPI.csproj", "{600C2930-7EBC-4495-8F80-6D6EA1058A90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTravelsFrontEnd", "..\EasyTravelsFrontEnd\EasyTravelsFrontEnd.csproj", "{D88CBFF9-D078-454A-A144-A8DF8DF019D5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{600C2930-7EBC-4495-8F80-6D6EA1058A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{600C2930-7EBC-4495-8F80-6D6EA1058A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{600C2930-7EBC-4495-8F80-6D6EA1058A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{600C2930-7EBC-4495-8F80-6D6EA1058A90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D88CBFF9-D078-454A-A144-A8DF8DF019D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D88CBFF9-D078-454A-A144-A8DF8DF019D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D88CBFF9-D078-454A-A144-A8DF8DF019D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D88CBFF9-D078-454A-A144-A8DF8DF019D5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

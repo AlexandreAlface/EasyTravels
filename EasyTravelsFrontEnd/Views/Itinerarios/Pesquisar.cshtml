@@ -1,0 +1,164 @@
+﻿@model List<DetalhesCompletosViewModel>
+
+<div class="min-h-screen bg-gray-100 flex items-center justify-center px-8">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-2x">
+        <div class="mb-6">
+            <a href="/Auth/Menu" class="button-back">
+                ← Voltar
+            </a>
+        </div>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Pesquisar Itinerário</h2>
+
+        <!-- Formulário de Pesquisa -->
+        <form method="get" action="/Itinerarios/Pesquisar" class="space-y-6">
+            <div>
+                <label for="atividade" class="block text-sm font-medium text-gray-600">Atividade</label>
+                <select id="atividade" name="atividade" class="w-full p-3 border border-gray-300 rounded-lg">
+                    <option value="" selected>Todos</option>
+                    @foreach (var atividade in Model.Select(i => i.Atividade).Distinct())
+                    {
+                        <option value="@atividade">@atividade</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label for="organizador" class="block text-sm font-medium text-gray-600">Organizador</label>
+                <select id="organizador" name="organizador" class="w-full p-3 border border-gray-300 rounded-lg">
+                    <option value="" selected>Todos</option>
+                    @foreach (var organizador in Model.Select(i => new { i.OrganizadorId, i.OrganizadorNome }).Distinct())
+                    {
+                        <option value="@organizador.OrganizadorId">@organizador.OrganizadorNome</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label for="dataInicio" class="block text-sm font-medium text-gray-600">Data de Início</label>
+                <input type="date" id="dataInicio" name="dataInicio" class="w-full p-3 border border-gray-300 rounded-lg" />
+            </div>
+            <div>
+                <label for="dataFim" class="block text-sm font-medium text-gray-600">Data de Fim</label>
+                <input type="date" id="dataFim" name="dataFim" class="w-full p-3 border border-gray-300 rounded-lg" />
+            </div>
+            <div>
+                <button type="submit" class="w-full bg-green-700 text-white p-3 rounded-lg">
+                    Pesquisar
+                </button>
+            </div>
+        </form>
+
+        <!-- Resultados -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="mt-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Resultados:</h3>
+                @foreach (var item in Model)
+                {
+                    <div class="border border-gray-300 rounded-lg p-4 mb-4 shadow-sm">
+                        <h4 class="text-lg font-bold">@item.ViagemDestino</h4>
+                        <p class="text-sm text-gray-600">
+                            Data: @item.ViagemDataInicio.ToString("dd/MM/yyyy") - @item.ViagemDataFim.ToString("dd/MM/yyyy")
+                        </p>
+                        <p class="text-sm text-gray-600">Organizador: @item.OrganizadorNome</p>
+                        <p class="text-sm text-gray-600">Itinerário: @item.Atividade</p>
+                        <form method="get" action="/Itinerarios/Detalhes">
+                            <input type="hidden" name="id" value="@item.ItinerarioId" />
+                            <button type="submit" class="text-blue-500 underline hover:text-blue-700 transition duration-300">
+                                Ver Detalhes
+                            </button>
+                        </form>
+                        <form method="get" action="/Itinerarios/Comprar" class="inline-block ml-4">
+                            <input type="hidden" name="id" value="@item.ViagemId" />
+                            <button type="submit" class="text-green-500 underline hover:text-green-700 transition duration-300">
+                                Comprar Itinerário
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-600 mt-4">Nenhum itinerário encontrado.</p>
+        }
+    </div>
+</div>
+
+
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const atividadeSelect = document.getElementById('atividade');
+        const organizadorSelect = document.getElementById('organizador');
+        const dataInicioInput = document.getElementById('dataInicio');
+        const dataFimInput = document.getElementById('dataFim');
+
+        function filterOptions() {
+            const selectedOrganizador = organizadorSelect.value;
+            const selectedAtividade = atividadeSelect.value;
+            const selectedDataInicio = dataInicioInput.value ? new Date(dataInicioInput.value) : null;
+            const selectedDataFim = dataFimInput.value ? new Date(dataFimInput.value) : null;
+
+            // Filtrar atividades com base no organizador e datas
+            Array.from(atividadeSelect.options).forEach(option => {
+                const optionDataInicio = option.dataset.datainicio ? new Date(option.dataset.datainicio) : null;
+                const optionDataFim = option.dataset.datafim ? new Date(option.dataset.datafim) : null;
+
+                const matchesOrganizador = !selectedOrganizador || option.dataset.viagem === selectedOrganizador;
+                const matchesDates =
+                    (!selectedDataInicio || (optionDataInicio && optionDataInicio >= selectedDataInicio)) &&
+                    (!selectedDataFim || (optionDataFim && optionDataFim <= selectedDataFim));
+
+                option.hidden = !(matchesOrganizador && matchesDates);
+            });
+
+            // Filtrar organizadores com base na atividade e datas
+            const matchingOrganizadores = new Set(
+                Array.from(atividadeSelect.options)
+                    .filter(option => {
+                        const optionDataInicio = option.dataset.datainicio ? new Date(option.dataset.datainicio) : null;
+                        const optionDataFim = option.dataset.datafim ? new Date(option.dataset.datafim) : null;
+
+                        const matchesAtividade = !selectedAtividade || option.value === selectedAtividade || option.value === "";
+                        const matchesDates =
+                            (!selectedDataInicio || (optionDataInicio && optionDataInicio >= selectedDataInicio)) &&
+                            (!selectedDataFim || (optionDataFim && optionDataFim <= selectedDataFim));
+
+                        return matchesAtividade && matchesDates;
+                    })
+                    .map(option => option.dataset.viagem)
+            );
+
+            Array.from(organizadorSelect.options).forEach(option => {
+                if (option.value === "") {
+                    option.hidden = false;
+                } else if (!selectedAtividade || matchingOrganizadores.has(option.value)) {
+                    option.hidden = false;
+                } else {
+                    option.hidden = true;
+                }
+            });
+        }
+
+        atividadeSelect.addEventListener('change', filterOptions);
+        organizadorSelect.addEventListener('change', filterOptions);
+        dataInicioInput.addEventListener('change', filterOptions);
+        dataFimInput.addEventListener('change', filterOptions);
+    });
+
+</script>
+
+<style>
+    .button-back {
+        background-color: #4a5568; /* Cor cinza */
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+        .button-back:hover {
+            background-color: #2d3748; /* Cor cinza mais escura */
+        }
+</style>

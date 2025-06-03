@@ -1,0 +1,71 @@
+﻿@model ReservaViewModel
+
+<div class="min-h-screen bg-gray-100 flex items-center justify-center px-8">
+    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-4xl">
+        <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">Editar Reserva</h2>
+        <form method="post" action="/Reservas/Editar">
+            <input type="hidden" name="Id" value="@Model.Id" />
+
+            <!-- Status -->
+            <div class="mb-4">
+                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                <select id="status" name="Status" class="w-full p-3 border border-gray-300 rounded-lg">
+                    <option value="Confirmada" selected="@(Model.Status == "Confirmada")">Confirmada</option>
+                    <option value="Pendente" selected="@(Model.Status == "Pendente")">Pendente</option>
+                    <option value="Cancelada" selected="@(Model.Status == "Cancelada")">Cancelada</option>
+                </select>
+            </div>
+
+            <!-- Tipo -->
+            <div class="mb-4">
+                <label for="tipo" class="block text-sm font-medium text-gray-700">Tipo de Reserva</label>
+                <select id="tipo" name="Tipo" class="w-full p-3 border border-gray-300 rounded-lg">
+                    <option value="Individual" selected="@(Model.Tipo == "Individual")">Individual</option>
+                    <option value="Grupo" selected="@(Model.Tipo == "Grupo")">Grupo</option>
+                </select>
+            </div>
+
+            <!-- Botões -->
+            <div class="flex justify-between mt-6">
+                <button type="submit" class="button-green">
+                    Guardar
+                </button>
+                <a href="/Reservas/GerirReservas" class="button-red">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .button-green {
+        background-color: #38a169; /* Cor verde */
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+        .button-green:hover {
+            background-color: #2f855a; /* Cor verde mais escura */
+        }
+
+    .button-red {
+        background-color: #e53e3e; /* Cor vermelha */
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+        .button-red:hover {
+            background-color: #c53030; /* Cor vermelha mais escura */
+        }
+</style>

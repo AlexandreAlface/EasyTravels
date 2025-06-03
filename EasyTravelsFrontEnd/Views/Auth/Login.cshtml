@@ -1,0 +1,54 @@
+﻿<div class="min-h-screen bg-gray-100 flex items-center justify-center px-8">
+    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-2xl">
+        <h2 class="text-3xl font-semibold text-gray-800 text-center mb-4">Login</h2>
+        <p class="text-gray-500 text-sm text-center mb-6">Introduz os teus dados para aceder.</p>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="bg-red-100 text-red-700 p-3 rounded mb-4">
+                <p>@ViewBag.Error</p>
+            </div>
+        }
+
+        <form method="post" action="/Auth/LoginToApp" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-600">Email</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-3 text-gray-400">
+                        <img src="/assets/mail.png" alt="Email Icon" class="w-5 h-5">
+                    </span>
+                    <input type="email" id="email" name="email" required
+                           class="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:outline-none">
+                </div>
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-600">Password</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-3 text-gray-400">
+                        <img src="/assets/padlock.png" alt="Password Icon" class="w-5 h-5">
+                    </span>
+                    <input type="password" id="password" name="password" required
+                           class="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:outline-none">
+                </div>
+            </div>
+            <div>
+                <button type="submit"
+                        class="w-full bg-green-700 text-white p-3 rounded-lg shadow-md hover:bg-green-800 hover:scale-105 active:scale-95 transition-transform duration-300">
+                    Entrar
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6 text-center">
+            <a href="/Auth/Register" class="text-green-700 hover:underline">Criar nova conta</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Remove o histórico de navegação para impedir "Voltar" ao pressionar o botão do navegador
+    history.pushState(null, document.title, location.href);
+    window.addEventListener('popstate', function () {
+        history.pushState(null, document.title, location.href);
+    });
+</script>

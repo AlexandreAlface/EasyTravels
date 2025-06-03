@@ -1,0 +1,258 @@
+﻿@using System.Text.Json
+@model DashboardViewModel
+
+<div class="min-h-screen bg-gray-100 flex flex-col px-8 py-8">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl">
+
+        <div class="mb-6">
+            <a href="/Auth/Menu" class="button-back">
+                ← Voltar
+            </a>
+        </div>
+
+        <h1 class="text-3xl font-semibold text-gray-800 mb-8 text-center">Dashboard de Estatísticas</h1>
+
+        <!-- Gráficos -->
+        <div class="grid grid-cols-2 gap-8">
+            <!-- Gráfico de Duração Total -->
+            <div>
+                <h2 class="text-xl font-semibold text-green-700 mb-4 border-b border-gray-200 pb-2">Duração Total por Destino</h2>
+                <div class="chart-container">
+                    <canvas id="chartDuração" class="chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de Compras por Viajante -->
+            <div>
+                <h2 class="text-xl font-semibold text-green-700 mb-4 border-b border-gray-200 pb-2">Compras por Viajante</h2>
+                <div class="chart-container-small">
+                    <canvas id="chartCompradores" class="chart-small"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-3 gap-8 my-8">
+            <div class="kpi-card">
+                <h3 class="text-xl font-semibold text-gray-800">Total de Participantes</h3>
+                <p id="kpiTotalParticipantes" class="text-3xl font-bold text-green-700">0</p>
+            </div>
+            <div class="kpi-card">
+                <h3 class="text-xl font-semibold text-gray-800">Média de Despesas</h3>
+                <p id="kpiMediaDespesas" class="text-3xl font-bold text-green-700">0 €</p>
+            </div>
+            <div class="kpi-card">
+                <h3 class="text-xl font-semibold text-gray-800">Viagem Mais Longa</h3>
+                <p id="kpiViagemLonga" class="text-3xl font-bold text-green-700">-</p>
+            </div>
+            <div class="kpi-card">
+                <h3 class="text-xl font-semibold text-gray-800">Custo Total das Viagens</h3>
+                <p id="kpiCustoTotal" class="text-3xl font-bold text-green-700">0 €</p>
+            </div>
+        </div>
+
+        <!-- Tabela de Estatísticas -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-green-700 mb-4 border-b border-gray-200 pb-2">Estatísticas Gerais</h2>
+            <table class="table-auto w-full border-collapse border border-gray-200">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="p-4 border">Viagem</th>
+                        <th class="p-4 border">Participantes</th>
+                        <th class="p-4 border">Despesas</th>
+                        <th class="p-4 border">Locais Mais Visitados</th>
+                        <th class="p-4 border">Tipo</th>
+                        <th class="p-4 border">Duração (Dias)</th>
+                        <th class="p-4 border">Custo Médio por Participante</th>
+                        <th class="p-4 border">Viajantes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var estatistica in Model.Estatisticas)
+                    {
+                        var compradores = Model.CompradoresPorViagem
+                        .FirstOrDefault(c => c.Viagem == estatistica.Viagem.Destino)?.Compradores;
+
+                        <tr class="border-t">
+                            <td class="p-4 border">@estatistica.Viagem.Destino</td>
+                            <td class="p-4 border text-center">@estatistica.Participantes</td>
+                            <td class="p-4 border text-right">@estatistica.Despesas.ToString("C")</td>
+                            <td class="p-4 border">@estatistica.LocaisMaisVisitados</td>
+                            <td class="p-4 border text-center">@estatistica.Tipo</td>
+                            <td class="p-4 border text-center">@estatistica.DuracaoDias</td>
+                            <td class="p-4 border text-right">@estatistica.MediaCustoPorParticipante.ToString("C")</td>
+                            <td class="p-4 border">
+                                @if (compradores != null && compradores.Any())
+                                {
+                                    @foreach (var comprador in compradores)
+                                    {
+                                        <p>@comprador</p>
+                                    }
+                                }
+                                else
+                                {
+                                    <span>Nenhum</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+        // Dados das estatísticas
+        const statistics = @Html.Raw(JsonSerializer.Serialize(Model.Estatisticas));
+        const compradoresData = @Html.Raw(JsonSerializer.Serialize(Model.CompradoresPorViagem));
+
+        // Atualizar os KPIs
+        const totalParticipantes = statistics.reduce((sum, stat) => sum + stat.Participantes, 0);
+        const mediaDespesas = (statistics.reduce((sum, stat) => sum + stat.Despesas, 0) / statistics.length).toFixed(2);
+        const viagemMaisLonga = statistics.reduce((longest, stat) => {
+            return stat.DuracaoDias > longest.DuracaoDias ? stat : longest;
+        }, { Viagem: { Destino: '-' }, DuracaoDias: 0 });
+        const custoTotal = statistics.reduce((sum, stat) => sum + stat.Despesas, 0);
+
+        // Atualizar os elementos HTML dos KPIs
+        document.getElementById('kpiTotalParticipantes').textContent = totalParticipantes;
+        document.getElementById('kpiMediaDespesas').textContent = `${mediaDespesas} €`;
+        document.getElementById('kpiViagemLonga').textContent = `${viagemMaisLonga.Viagem.Destino} (${viagemMaisLonga.DuracaoDias} dias)`;
+        document.getElementById('kpiCustoTotal').textContent = `${custoTotal.toFixed(2)} €`;
+
+        // Gráfico de Duração Total por Destino
+        const groupedData = statistics.reduce((acc, stat) => {
+            if (acc[stat.Viagem.Destino]) {
+                acc[stat.Viagem.Destino] += stat.DuracaoDias;
+            } else {
+                acc[stat.Viagem.Destino] = stat.DuracaoDias;
+            }
+            return acc;
+        }, {});
+
+        const durationLabels = Object.keys(groupedData);
+        const durationData = Object.values(groupedData);
+        const durationColors = durationLabels.map(() => generateRandomColor());
+
+        const ctxDuration = document.getElementById('chartDuração');
+        if (ctxDuration) {
+            new Chart(ctxDuration.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: durationLabels,
+                    datasets: [{
+                        label: 'Duração Total (Dias)',
+                        data: durationData,
+                        backgroundColor: durationColors,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: true, text: 'Duração Total por Destino' }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de Compras por Viajante
+        const compradoresGroupedData = compradoresData.reduce((acc, item) => {
+            item.Compradores.forEach(comprador => {
+                acc[comprador] = (acc[comprador] || 0) + 1;
+            });
+            return acc;
+        }, {});
+
+        const compradoresLabels = Object.keys(compradoresGroupedData);
+        const compradoresCounts = Object.values(compradoresGroupedData);
+        const compradoresColors = compradoresLabels.map(() => generateRandomColor());
+
+        const ctxCompradores = document.getElementById('chartCompradores');
+        if (ctxCompradores) {
+            new Chart(ctxCompradores.getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: compradoresLabels,
+                    datasets: [{
+                        label: 'Compras por Viajante',
+                        data: compradoresCounts,
+                        backgroundColor: compradoresColors,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: true, text: 'Compras por Viajante' }
+                    }
+                }
+            });
+        }
+
+        // Função para gerar cores aleatórias
+        function generateRandomColor() {
+            const r = Math.floor(Math.random() * 256);
+            const g = Math.floor(Math.random() * 256);
+            const b = Math.floor(Math.random() * 256);
+            return `rgba(${r}, ${g}, ${b}, 0.6)`;
+        }
+    });
+
+
+</script>
+
+<style>
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Duas colunas iguais */
+        gap: 2rem; /* Espaçamento entre os gráficos */
+    }
+
+    .chart-container {
+        width: 100%; /* Garante que o gráfico ocupe todo o espaço do contêiner */
+        margin: 0 auto;
+    }
+
+    .chart {
+        max-width: 100%; /* Ajusta a largura do gráfico */
+        height: 300px; /* Altura padrão para os gráficos */
+    }
+
+    .chart-container-small {
+        width: 80%; /* Reduz a largura do segundo gráfico */
+        height: 80%; /* Altura padrão para os gráficos */
+        margin: 0 auto;
+    }
+
+    .chart-small {
+        height: 150px; /* Altura reduzida para o segundo gráfico */
+        max-width: 100%;
+    }
+
+    .kpi-card {
+        background-color: #f7fafc;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .button-back {
+        background-color: #4a5568; /* Cor cinza */
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+        .button-back:hover {
+            background-color: #2d3748; /* Cor cinza mais escura */
+        }
+</style>

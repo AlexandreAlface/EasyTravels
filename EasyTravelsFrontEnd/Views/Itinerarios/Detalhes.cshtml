@@ -1,0 +1,89 @@
+﻿@model DetalhesViewModel
+
+<div class="min-h-screen bg-gray-100 flex items-center justify-center px-8 py-8">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-4xl">
+        <h1 class="text-3xl font-semibold text-gray-800 mb-8 text-center">Detalhes do Itinerário</h1>
+
+        <!-- Itinerário -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-green-700 mb-4 border-b border-gray-200 pb-2">Informações do Itinerário</h2>
+            <div class="space-y-2">
+                <p><span class="font-medium text-gray-700">Atividade:</span> @Model.Itinerario.Atividade</p>
+                <p><span class="font-medium text-gray-700">Data:</span> @Model.Itinerario.Data.ToString("dd/MM/yyyy")</p>
+                <p><span class="font-medium text-gray-700">Descrição:</span> @Model.Itinerario.Descricao</p>
+            </div>
+        </div>
+
+        <!-- Viagem -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-green-700 mb-4 border-b border-gray-200 pb-2">Informações da Viagem</h2>
+            <div class="space-y-2">
+                <p><span class="font-medium text-gray-700">Destino:</span> @Model.Viagem.Destino</p>
+                <p><span class="font-medium text-gray-700">Data de Início:</span> @Model.Viagem.DataInicio.ToString("dd/MM/yyyy")</p>
+                <p><span class="font-medium text-gray-700">Data de Fim:</span> @Model.Viagem.DataFim.ToString("dd/MM/yyyy")</p>
+                <p>
+                    <span class="font-medium text-gray-700">Custo Total:</span>
+                    @(Model.Viagem.CustoTotal.ToString() ?? "Sem custo disponível")
+                </p>
+            </div>
+        </div>
+
+        <!-- Alojamentos -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-green-700 mb-4 border-b border-gray-200 pb-2">Alojamentos</h2>
+            @if (Model.Alojamentos != null && Model.Alojamentos.Any())
+            {
+                <ul class="space-y-4">
+                    @foreach (var alojamento in Model.Alojamentos)
+                    {
+                        <li class="border rounded-lg p-4 bg-gray-50">
+                            <p><span class="font-medium text-gray-700">Nome:</span> @alojamento.Nome</p>
+                            <p><span class="font-medium text-gray-700">Endereço:</span> @alojamento.Endereco</p>
+                            <p><span class="font-medium text-gray-700">Custo:</span> @alojamento.Custo.ToString("C")</p>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-gray-600">Sem informações de alojamento.</p>
+            }
+        </div>
+
+        <!-- Transportes -->
+        <div>
+            <h2 class="text-xl font-semibold text-green-700 mb-4 border-b border-gray-200 pb-2">Transportes</h2>
+            @if (Model.Transportes != null && Model.Transportes.Any())
+            {
+                <ul class="space-y-4">
+                    @foreach (var transporte in Model.Transportes)
+                    {
+                        <li class="border rounded-lg p-4 bg-gray-50">
+                            <p><span class="font-medium text-gray-700">Tipo:</span> @transporte.Tipo</p>
+                            <p><span class="font-medium text-gray-700">Detalhes:</span> @transporte.Detalhes</p>
+                            <p><span class="font-medium text-gray-700">Custo:</span> @transporte.Custo.ToString("C")</p>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-gray-600">Sem informações de transporte.</p>
+            }
+        </div>
+        <div class="flex justify-between mt-8">
+            <!-- Botão Voltar -->
+            <a href="/Itinerarios/Pesquisar" style="background-color: red" class="text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-600 transition duration-300">
+                Voltar
+            </a>
+
+            <!-- Botão Comprar -->
+            <form method="get" action="/Itinerarios/Comprar">
+                <input type="hidden" name="id" value="@Model.Viagem.Id" />
+                <button type="submit" class="bg-green-700 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-800 transition duration-300">
+                    Comprar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

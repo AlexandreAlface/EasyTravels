@@ -1,0 +1,28 @@
+﻿<div class="min-h-screen bg-gray-100 flex flex-col px-8">
+    <div class="flex-grow flex items-center justify-center">
+        <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-2xl">
+            <h2 class="text-3xl font-semibold text-gray-800 text-center mb-6">Menu Principal</h2>
+            <div class="space-y-4">
+            @if (ViewBag.RoleId == "2") 
+            {
+                <a href="/Itinerarios/Pesquisar" class="block w-full bg-green-700 text-white p-3 rounded-lg shadow-md hover:bg-green-800 transition duration-300 text-center">Comprar Itinerário</a>
+            }
+
+            @if (ViewBag.RoleId == "1" || ViewBag.RoleId == "2") 
+            {
+                <a href="/Reservas/GerirReservas" class="block w-full bg-green-700 text-white p-3 rounded-lg shadow-md hover:bg-green-800 transition duration-300 text-center">Gerir Reservas</a>
+            }
+
+            @if (ViewBag.RoleId == "1") 
+            {
+                <a href="/Dashboard/Index" class="block w-full bg-green-700 text-white p-3 rounded-lg shadow-md hover:bg-green-800 transition duration-300 text-center">Dashboard</a>
+            }
+        </div>
+
+
+            <div class="mt-4">
+                <a href="/Auth/Logout" class="text-red-500 hover:underline block text-center">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>

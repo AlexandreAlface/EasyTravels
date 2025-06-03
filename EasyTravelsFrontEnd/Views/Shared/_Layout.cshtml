@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MVC</title>
+    <!-- Tailwind CSS -->
+    <link href="~/css/site.css" rel="stylesheet">
+</head>
+<body class="bg-white min-h-screen flex flex-col">
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 py-4 bg-gray-100">
+        <div>
+            &copy; 2025 - EasyTravels - <a href="#" class="text-blue-500 underline">Privacy</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
